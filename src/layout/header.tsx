@@ -1,68 +1,89 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Button, Box, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { useNavigate, Link } from 'react-router-dom';
-import logo from '../assets/zoho-200px-50px-05-2048x512.png'
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutAction } from '../redux/slice/authSlice';
+import { type RootState } from '../redux/store';
+import logo from '../assets/zoho-200px-50px-05-2048x512.png';
+
+const navItems = [
+  { label: 'Menu 1', path: '/dashboard/menu1' },
+  { label: 'Menu 2', path: '/dashboard/menu2' },
+  { label: 'Menu 3', path: '/dashboard/menu3' },
+];
+
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  
+  const user = useSelector((state: RootState) => state.auth.user);
+  
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
+  const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
   const handleLogout = () => {
+    dispatch(logoutAction());
     handleMenuClose();
     navigate('/login');
   };
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: 1201, backgroundColor: '#ffffff', color: '#333' }}>
-      <Toolbar>
-        <Box 
-          component={Link} 
-          to="/dashboard" 
-          sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            textDecoration: 'none',
-            mr: 4 
-          }}
-        >
-          <img 
-            src={logo}
-            alt="Iouring Company Logo"
-            style={{ height: '40px', objectFit: 'contain' }} 
-          />
-        </Box>
+    <AppBar position="fixed" elevation={1} sx={{ zIndex: 1201, bgcolor: '#fff', color: '#2d3436' }}>
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
         
-        <Box sx={{ flexGrow: 1, display: 'flex', gap: 2 }}>
-          <Button color="inherit" component={Link} to="/dashboard/menu1" sx={{ textTransform: 'none' }}>Menu 1</Button>
-          <Button color="inherit" component={Link} to="/dashboard/menu2" sx={{ textTransform: 'none' }}>Menu 2</Button>
-          <Button color="inherit" component={Link} to="/dashboard/menu3" sx={{ textTransform: 'none' }}>Menu 3</Button>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box component={Link} to="/dashboard" sx={{ display: 'flex', mr: 4 }}>
+            <img src={logo} alt="Logo" style={{ height: 35, objectFit: 'contain' }} />
+          </Box>
+          
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            {navItems.map((item) => (
+              <Button
+                key={item.path}
+                component={Link}
+                to={item.path}
+                sx={{
+                  textTransform: 'none',
+                  color: location.pathname === item.path ? 'primary.main' : 'inherit',
+                  fontWeight: location.pathname === item.path ? 600 : 400
+                }}
+              >
+                {item.label}
+              </Button>
+            ))}
+          </Box>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <Typography 
-            variant="body1" 
-            onClick={handleMenuOpen} 
-            sx={{ cursor: 'pointer', mr: 1, fontWeight: 500 }}
+            variant="body2" 
+            sx={{ cursor: 'pointer', fontWeight: 500, display: { xs: 'none', sm: 'block' } }}
+            onClick={handleMenuOpen}
           >
-            Admin User
+            {user || 'Admin User'}
           </Typography>
-          <IconButton color="inherit" onClick={handleMenuOpen}>
-            <AccountCircle />
+          <IconButton onClick={handleMenuOpen} size="small" sx={{ ml: 0.5 }}>
+            <AccountCircle fontSize="large" />
           </IconButton>
           
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
+            disableScrollLock 
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            <MenuItem onClick={handleLogout} sx={{ minWidth: 120, fontSize: '0.9rem' }}>
+              Logout
+            </MenuItem>
           </Menu>
         </Box>
+
       </Toolbar>
     </AppBar>
   );

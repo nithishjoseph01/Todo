@@ -1,121 +1,133 @@
 import React, { useState } from 'react';
 import { 
   Box, Button, TextField, Typography, Paper, Avatar, Container,
-  InputAdornment, IconButton 
+  InputAdornment, IconButton, Alert, Fade 
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useNavigate } from 'react-router-dom';
-import { loginAction } from '../redux/slice/authSlice';
 import { useDispatch } from 'react-redux';
-
+import { loginAction } from '../redux/slice/authSlice';
 
 const LoginPage = () => {
-  const [username, setusername] = useState('');
-  const [password, setPassword] = useState('');
+  const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useDispatch()
+  const [error, setError] = useState('');
+  
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCredentials(prev => ({ ...prev, [name]: value }));
+    if (error) setError(''); 
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === "admin" && password === "admin@123") {
-      dispatch(loginAction(username));
-      navigate('/dashboard'); 
+
+    if (credentials.username === "admin" && credentials.password === "admin@123") {
+      dispatch(loginAction(credentials.username));
+      navigate('/dashboard/menu1'); 
     } else {
-      alert("Invalid username or password");
+      setError("Invalid username or password");
     }
   };
 
   return (
     <Box 
       sx={{ 
-        height: '100vh', 
-        width: '100vw',
+        minHeight: '100vh', 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+        p: 2
       }}
     >
       <Container maxWidth="xs">
-        <Paper 
-          elevation={10} 
-          sx={{ 
-            p: 4, 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            borderRadius: 4,
-            bgcolor: 'rgba(255, 255, 255, 0.95)'
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main', width: 56, height: 56 }}>
-            <LockOutlinedIcon fontSize="large" />
-          </Avatar>
-          
-          <Typography component="h1" variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
-            Welcome
-          </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-            Please enter your details to login
-          </Typography>
-
-          <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%' }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Username"
-              autoFocus
-              value={username}
-              onChange={(e) => setusername(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
- 
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
+        <Fade in timeout={800}>
+          <Paper 
+            elevation={24} 
+            sx={{ 
+              p: { xs: 3, sm: 5 }, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center',
+              borderRadius: 3,
+              bgcolor: 'rgba(255, 255, 255, 0.9)',
+              backdropFilter: 'blur(10px)'
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'primary.main', width: 56, height: 56 }}>
+              <LockOutlinedIcon fontSize="large" />
+            </Avatar>
             
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              size="large"
-              sx={{ 
-                mt: 4, 
-                mb: 2, 
-                borderRadius: 2,
-                height: '50px',
-                fontSize: '1.1rem',
-                textTransform: 'none'
-              }}
-            >
-              Login
-            </Button>
-          </Box>
-        </Paper>
+            <Typography variant="h5" sx={{ fontWeight: 700, mt: 1 }}>
+              Portal Login
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+              Access your dashboard below
+            </Typography>
+
+            {error && (
+              <Alert severity="error" sx={{ width: '100%', mb: 2, borderRadius: 2 }}>
+                {error}
+              </Alert>
+            )}
+
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ width: '100%' }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Username"
+                name="username"
+                autoComplete="username"
+                autoFocus
+                value={credentials.username}
+                onChange={handleChange}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                value={credentials.password}
+                onChange={handleChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ 
+                  mt: 4, 
+                  py: 1.5,
+                  borderRadius: 2,
+                  fontWeight: 'bold',
+                  textTransform: 'uppercase',
+                  letterSpacing: 1
+                }}
+              >
+                Sign In
+              </Button>
+            </Box>
+          </Paper>
+        </Fade>
       </Container>
     </Box>
   );
