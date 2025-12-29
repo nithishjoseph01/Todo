@@ -42,7 +42,7 @@ const Menu1 = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 900, mx: 'auto' }}>
+    <Box sx={{ maxWidth: '100%', width: '100%', mx: 'auto' }}>
       <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
         <AssignmentIcon color="primary" sx={{ fontSize: 40 }} />
         <Typography variant="h4" sx={{ fontWeight: 800, letterSpacing: -0.5 }}>
@@ -56,7 +56,7 @@ const Menu1 = () => {
         </Typography>
         <Box component="form" onSubmit={handleAddTask} sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, alignItems: 'flex-end' }}>
           <TextField 
-            label="What needs to be done?" 
+            label="Enter Task Name" 
             variant="standard" 
             name="name"
             value={form.name}

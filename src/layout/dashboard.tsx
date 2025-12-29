@@ -14,11 +14,12 @@ const DashboardLayout = () => {
         component="main" 
         sx={{ 
           flexGrow: 1, 
+          width: '100%',
           bgcolor: (theme) => theme.palette.grey[50],
           py: 4
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth={false} sx={{ px: { xs: 2, sm: 5 } }}>
           <Outlet />
         </Container>
       </Box>

@@ -31,6 +31,10 @@ const Header = () => {
     navigate('/login');
   };
 
+  const displayName = user 
+  ? user.charAt(0).toUpperCase() + user.slice(1) 
+  : 'Admin';
+
   return (
     <AppBar position="fixed" elevation={1} sx={{ zIndex: 1201, bgcolor: '#fff', color: '#2d3436' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -64,7 +68,7 @@ const Header = () => {
             sx={{ cursor: 'pointer', fontWeight: 500, display: { xs: 'none', sm: 'block' } }}
             onClick={handleMenuOpen}
           >
-            {user || 'Admin User'}
+            {displayName || 'Admin User'}
           </Typography>
           <IconButton onClick={handleMenuOpen} size="small" sx={{ ml: 0.5 }}>
             <AccountCircle fontSize="large" />

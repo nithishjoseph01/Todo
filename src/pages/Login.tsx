@@ -26,7 +26,6 @@ const LoginPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (credentials.username === "admin" && credentials.password === "admin@123") {
       dispatch(loginAction(credentials.username));
       navigate('/dashboard/menu1'); 
@@ -38,15 +37,21 @@ const LoginPage = () => {
   return (
     <Box 
       sx={{ 
-        minHeight: '100vh', 
+        // 1. Ensure the container takes exactly the full viewport
+        height: '100vh', 
+        width: '100%', 
+        // 2. This is the "Magic" for centering
         display: 'flex', 
+        flexDirection: 'column',
         alignItems: 'center', 
         justifyContent: 'center', 
+        // 3. Background
         background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-        p: 2
+        overflow: 'hidden'
       }}
     >
-      <Container maxWidth="xs">
+      {/* 4. Container ensures it doesn't get too wide on big screens */}
+      <Container component="main" maxWidth="xs">
         <Fade in timeout={800}>
           <Paper 
             elevation={24} 
@@ -57,7 +62,10 @@ const LoginPage = () => {
               alignItems: 'center',
               borderRadius: 3,
               bgcolor: 'rgba(255, 255, 255, 0.9)',
-              backdropFilter: 'blur(10px)'
+              backdropFilter: 'blur(10px)',
+              // Ensures the paper itself doesn't shift
+              width: '100%',
+              boxSizing: 'border-box'
             }}
           >
             <Avatar sx={{ m: 1, bgcolor: 'primary.main', width: 56, height: 56 }}>
@@ -84,10 +92,9 @@ const LoginPage = () => {
                 fullWidth
                 label="Username"
                 name="username"
-                autoComplete="username"
-                autoFocus
                 value={credentials.username}
                 onChange={handleChange}
+                autoFocus
               />
               <TextField
                 margin="normal"
@@ -96,7 +103,6 @@ const LoginPage = () => {
                 name="password"
                 label="Password"
                 type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
                 value={credentials.password}
                 onChange={handleChange}
                 InputProps={{
@@ -119,8 +125,7 @@ const LoginPage = () => {
                   py: 1.5,
                   borderRadius: 2,
                   fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                  letterSpacing: 1
+                  textTransform: 'uppercase'
                 }}
               >
                 Sign In
